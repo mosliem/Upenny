@@ -4,7 +4,7 @@
 
 <br>
 
-Upenny is an iOS app, which tracks user money transactions (expense or income). It enables the user to add new expenses or incomes and specify his category with a note and icon. It provides the user with a weekly or monthly report about his expenses and the percentage of expenses for each category to all that was spent. Provides an account history for income and expense transactions done before.
+Upenny is an iOS app that tracks user money transactions (expense or income). It enables the user to add new expenses or incomes and specify his category with a note and icon. It provides the user with a weekly or monthly report about his expenses and the percentage of expenses for each category to all that was spent. Provides an account history for income and expense transactions done before.
 
 <br>
 <p align="center">
