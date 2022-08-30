@@ -1,4 +1,4 @@
-<img src="https://github.com/mosliem/Upenny/blob/main/Screenshots/180.png" width=150 height=150 />
+<img src="https://github.com/mosliem/Upenny/blob/main/Screenshots/180.png" width=100 height=100 />
 
 # Upenny
 
