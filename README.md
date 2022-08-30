@@ -36,3 +36,51 @@ Upenny is an iOS app, which tracks user money transactions (expense or income). 
         
         
 ## Usage
+This a small demo video about the main features
+
+https://user-images.githubusercontent.com/52772674/187349767-f067e2ce-5dfb-4daa-9750-980fea66b0e0.mp4
+
+
+## Features
+
+- add or delete transactions(income or expense) from account history.
+- locally saves all transactions using Realm.
+- add a note for a transaction and choose a customized icon for its category.
+- View all transactions done on account history.
+- view a weekly or monthly report about all expenses showing total expenses, a bar chart visualize it and all categories and percentage of its expense to the total spent.
+
+
+## App Structrue
+
+- Upenny
+   - Core 
+     - AppDelegate
+     - SceneDelegate
+     
+   - Resources
+     - Extensions
+     - info.plist
+     
+   - Scenes  
+     - Splash Screen 
+     - Tab Bar
+     - Daily Transactions
+     - Account History Details
+     - Transactions Chart
+     - Add Transaction
+     - Transaction Details
+     - Category Expenses Details
+    
+   - Storage
+     - Data models
+     - Realm manger
+  
+  
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+  
+<h3 align="left">Connect with me</h3>
+
+ -  Mohamed Sliem - mohamedmostafa191299@gmail.com
+ -  [Linkedin](https://www.linkedin.com/in/mohamed-sliem-662491172/)
