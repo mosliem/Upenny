@@ -178,7 +178,7 @@ class RealmManger {
     func getExpenseTransactionsBetweenDates(
         from startDate: Date,
         to endDate: Date,
-        completion: @escaping([String:[CategoryEntryModel]] , [String]) -> ()
+        completion: @escaping([String:[CategoryEntryModel]]) -> ()
     ){
         
         let result = realmLocal.objects(CategoryEntryModel.self)
@@ -193,7 +193,9 @@ class RealmManger {
         
         var expensesDictionary = [String:[CategoryEntryModel]]()
         
+        // grouping categories by name  in dictionary
         for expense in result {
+            
             let expenseName = expense.categoryName
             var expenseArray = expensesDictionary[expenseName] ?? [CategoryEntryModel]()
             
@@ -201,17 +203,10 @@ class RealmManger {
             expensesDictionary.updateValue(expenseArray, forKey: expenseName)
         }
  
-        var expensesKeysIndex = [String]()
-  
-        for key in expensesDictionary {
-            expensesKeysIndex.append(key.key)
-        }
-        
-        expensesKeysIndex = expensesKeysIndex.sorted()
-        completion(expensesDictionary, expensesKeysIndex)
+        completion(expensesDictionary)
     }
-    //MARK:- Deleting object function from realm
     
+    //MARK:- Deleting object function from realm
     
     func deleteTransactionWithDate(date: Date, transactionType: TransactionType, completion: @escaping (Result<Bool , Error>) -> ()){
         

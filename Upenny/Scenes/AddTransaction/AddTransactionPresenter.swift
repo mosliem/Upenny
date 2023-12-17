@@ -140,7 +140,7 @@ class AddTransactionPresenter: AddTransactionViewPresenter {
         guard let name = name else{
             return
         }
-        category.categoryName = name
+        category.categoryName = name.lowercased()
     }
     
     func addNotePressed(){

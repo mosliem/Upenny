@@ -7,7 +7,7 @@
 
 import Charts
 
-protocol TransactionsChartView: class {
+protocol TransactionsChartView: AnyObject {
     
     var presenter: TranasactionsChartViewPresenter? {get set}
     func displayChartData(data: BarChartData?)
@@ -21,6 +21,7 @@ protocol TransactionsChartView: class {
     func slideToRightAnimation()
     func moveToCategoryEntriesDetailsVC(categoryEntries: [CategoryEntryModel]?)
     func chartAnimation()
+    func slideToXvalue(_ xValue: Double)
 }
 
 

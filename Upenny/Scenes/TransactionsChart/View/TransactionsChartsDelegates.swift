@@ -40,6 +40,7 @@ extension TransactionsChartVC: UITableViewDelegate, UITableViewDataSource{
 
 
 extension TransactionsChartVC: TransactionsChartView{
+
     
     func chartAnimation() {
         barChartView.animate(yAxisDuration: 0.8)
@@ -80,6 +81,7 @@ extension TransactionsChartVC: TransactionsChartView{
         barChartView.xAxis.valueFormatter = XAxisMonthData(currentMonth: currentMonth)
         barChartView.xAxis.granularity = 1
         barChartView.setVisibleXRangeMaximum(6)
+    
     }
     
     func displayChartData(data: BarChartData?) {
@@ -87,6 +89,7 @@ extension TransactionsChartVC: TransactionsChartView{
         barChartView.data = data
         barChartView.notifyDataSetChanged()
         barChartView.fitScreen()
+        
     }
     
     func handleXAxisWeekData(){
@@ -100,8 +103,16 @@ extension TransactionsChartVC: TransactionsChartView{
     func handleChartYAxis(yMin: Double, yMax: Double){
         barChartView.rightAxis.axisMaximum = yMax
         barChartView.rightAxis.axisMinimum = yMin
-        barChartView.rightAxis.setLabelCount(3, force: true)
+        barChartView.rightAxis.setLabelCount(4, force: true)
     }
+    
+    func slideToXvalue(_ xValue: Double) {
+        barChartView.moveViewToX(xValue / 4)
+    }
+        
+}
+
+extension TransactionsChartVC {
     
     func moveToCategoryEntriesDetailsVC(categoryEntries: [CategoryEntryModel]?) {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CategoryExpensesDetailsVC") as! CategoryExpensesDetailsVC
@@ -110,4 +121,3 @@ extension TransactionsChartVC: TransactionsChartView{
     }
     
 }
-

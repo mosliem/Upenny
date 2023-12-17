@@ -11,10 +11,13 @@ class TransactionsChartPresenter: TranasactionsChartViewPresenter {
     weak var view: TransactionsChartView?
     private var chartWeekData = [[CategoryEntryModel]]()
     private var chartMonthData = [[CategoryEntryModel]]()
+    
     private var expensesCategories = [String: [CategoryEntryModel]]()
     private var expensesCategoriesIndexes = [String]()
+    private var expensesCategoryExpensesTotal = [String : Float]()
     
     private var selectedIndexType: IndexType = .Week
+    
     private var currentStartDate: Date = Date()
     private var currentEndDate : Date = Date().startOfWeekDate
     
@@ -26,18 +29,21 @@ class TransactionsChartPresenter: TranasactionsChartViewPresenter {
     
     func viewWillAppear() {
         updateCurrentDate()
-        dateInterval()
-        getExpensesChartData()
-        getExpensesCategoriesData()
-        totalExpensesValue()
+        getViewsData()
     }
     
     func getViewsData(){
         
-        getExpensesChartData()
-        getExpensesCategoriesData()
-        dateInterval()
+        DispatchQueue.global().sync {
+            getExpensesChartData()
+            getExpensesCategoriesData()
+            dateInterval()
+            sortCategoriesExpensesTotal()
+        }
+        
+        // its result is consequent to the process of calculating total expenses by category
         totalExpensesValue()
+        view?.reloadTableView()
     }
     
     func slideChartLeft() {
@@ -119,7 +125,22 @@ class TransactionsChartPresenter: TranasactionsChartViewPresenter {
         
     }
   
-    //MARK:- Private functions
+//MARK:- Private functions
+    
+    private func sortCategoriesExpensesTotal(){
+        
+        expensesCategoryExpensesTotal.removeAll()
+        
+        for category in expensesCategories {
+            expensesCategoryExpensesTotal[category.key] = category.value.map({$0.cost}).reduce(0, +)
+        }
+        
+        expensesCategoriesIndexes = expensesCategoryExpensesTotal.sorted(by: {$0.value > $1.value}).map({$0.key})
+    }
+    
+    
+  
+    
     private func dateInterval(){
         
         let startDayDate = currentStartDate.dayOfDate
@@ -131,16 +152,9 @@ class TransactionsChartPresenter: TranasactionsChartViewPresenter {
     
     private func totalExpensesValue(){
         
-        var totalExpenses: Float = 0
-        
-        for key in expensesCategoriesIndexes{
-            
-            let category = expensesCategories[key]
-            totalExpenses += category?.map{$0.cost}.reduce(0, +) ?? 0
-        }
-        
-        self.totalExpenses = totalExpenses
+        self.totalExpenses = expensesCategoryExpensesTotal.map({$0.value}).reduce(0, +)
         view?.displayTotalSpent(valueString: "$"+totalExpenses.ZeroDots)
+
     }
     
     private func updateCurrentDate(changeValue: Double? = 0){
@@ -176,11 +190,10 @@ class TransactionsChartPresenter: TranasactionsChartViewPresenter {
     
     private func getExpensesCategoriesData(){
         
-        RealmManger.shared.getExpenseTransactionsBetweenDates(from: currentStartDate, to: currentEndDate) { [weak self] (expensesCategories, expensesCategoriesIndexes)  in
+        RealmManger.shared.getExpenseTransactionsBetweenDates(from: currentStartDate, to: currentEndDate) { [weak self] (expensesCategories)  in
             
             self?.expensesCategories = expensesCategories
-            self?.expensesCategoriesIndexes = expensesCategoriesIndexes
-            self?.view?.reloadTableView()
+            
         }
     }
     
@@ -189,6 +202,7 @@ class TransactionsChartPresenter: TranasactionsChartViewPresenter {
         RealmManger.shared.getIndexedExpenseTransactionsBetweenDates(from: currentStartDate, to: currentEndDate, indexType: selectedIndexType) {[weak self] (result) in
             
             switch self!.selectedIndexType{
+                
             case .Week:
                 self?.chartWeekData = result
                 self?.configureWeekChartData(data: result)
@@ -213,7 +227,7 @@ class TransactionsChartPresenter: TranasactionsChartViewPresenter {
         
         ChartsHelper.configureBarChartWeekData(weekTransactions: data) { [weak self](barChartData) in
             self?.view?.chartAnimation()
-            self?.hanldeYMinMax(barChartData.yMin, barChartData.yMax)
+            self?.handleYMinMax(barChartData.yMin, barChartData.yMax)
             self?.view?.displayChartData(data: barChartData)
             self?.view?.handleXAxisWeekData()
         }
@@ -227,23 +241,31 @@ class TransactionsChartPresenter: TranasactionsChartViewPresenter {
             return
         }
         
+        let currentDayOfMonth = Date().dayOfDate
+        
         ChartsHelper.configureBarChartMonthData(monthTransactions: data) { [weak self] (barChartData, currentMonth)  in
+            
             self?.view?.chartAnimation()
-            self?.hanldeYMinMax(barChartData.yMin, barChartData.yMax)
+            self?.handleYMinMax(barChartData.yMin, barChartData.yMax)
             self?.view?.displayChartData(data: barChartData)
             self?.view?.handleXAxisMonthData(currentMonth: currentMonth)
+            
+            self?.view?.slideToXvalue(Double(currentDayOfMonth))
         }
     }
     
-    private func hanldeYMinMax( _ yMin: Double,_ yMax: Double){
+    private func handleYMinMax( _ yMin: Double,_ yMax: Double) {
         
-        let yMin = yMin
+        var yMin = yMin
         var yMax = yMax
+        
         if yMax == yMin {
             yMax = yMin * 2
+            yMin = yMin / 2
         }
         
         self.view?.handleChartYAxis(yMin: yMin, yMax: yMax)
     }
+    
     
 }
